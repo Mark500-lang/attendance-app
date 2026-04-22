@@ -1,0 +1,80 @@
+.standalone-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding-top: env(safe-area-inset-top); /* ← add this */
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #1A1341;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    padding: 8px 20px 8px; /* ← remove the env(safe-area-inset-top) from here */
+}
+.header-left-container {
+    display: flex;
+    align-items: center;
+    flex: 1; /* Take up remaining space */
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    margin-right: 15px;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    color: #ffffff;
+}
+.notification-icon {
+    font-size: 40px;
+    color: #ffffff;
+    padding: 8px;
+}
+
+.back-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+    color: #ffffff;
+}
+
+
+
+
+
+@media (max-width: 480px) {
+    .header {
+        padding: 15px;
+    }
+    .back-button {
+    padding: 6px;
+    font-size: 30px;
+    }
+    .notification-icon {
+        padding: 6px;
+        font-size: 30px;
+    }
+    .header-title {
+        font-size: 18px;
+    }
+}

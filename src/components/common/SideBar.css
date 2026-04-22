@@ -1,0 +1,212 @@
+/* SideBar.css */
+.SideBar-container {
+    position: fixed;
+    top: 0;
+    left: -280px; /* Hidden by default - off screen */
+    width: 280px;
+    height: 100vh;
+    background: white;
+    color: #000000;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 1000;
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    touch-action: pan-y;
+}
+
+.SideBar-container.open {
+    transform: translateX(280px); /* Slide in from left */
+}
+
+.SideBar-container.closed {
+    transform: translateX(-280px); /* Slide out to left */
+}
+
+/* Add smooth transition for closing */
+.SideBar-container.closing {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Close button for mobile */
+.sidebar-close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.sidebar-close-btn:hover {
+    color: #1674a2;
+    transform: scale(1.1);
+}
+
+.sidebar-close-btn:active {
+    transform: scale(0.95);
+}
+
+.sidebar-header {
+    padding: 70px 20px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.sidebar-user-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.version-text {
+    font-size: 12px;
+    color: #2c2c2c;
+    font-weight: 400;
+    padding: 4px 12px;
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 18px 25px;
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    border-left: 4px solid transparent;
+    margin: 0 10px;
+    border-radius: 0 10px 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-item.active {
+    color: #1674a2;
+}
+
+.sidebar-item.active::before {
+    width: 100%;
+}
+
+.sidebar-icon {
+    font-size: 22px;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-label {
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+    .SideBar-container {
+        left: 0;
+        transform: translateX(0);
+        width: 350px;
+    }
+    
+    .SideBar-container.closed {
+        transform: translateX(-350px);
+    }
+    
+    .SideBar-container.open {
+        transform: translateX(0);
+    }
+    .version-text {
+        font-size: 16px;
+    }
+    .sidebar-icon {
+        font-size: 30px;
+    }
+    .sidebar-label {
+        font-size: 20px;
+        font-weight: 600;
+    }
+    .sidebar-close-btn {
+        display: flex;
+    }
+    
+    /* Desktop hover effect for sidebar */
+    .main-page:hover .SideBar-container.closed {
+        transform: translateX(0);
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .SideBar-container {
+        width: 280px;
+        left: -280px;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .SideBar-container.open {
+        transform: translateX(280px);
+    }
+    
+    .sidebar-close-btn {
+        display: none;
+    }
+    
+    .sidebar-header {
+        padding: 30px 20px 5px;
+    }
+    
+    .profile-image {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .sidebar-item {
+        padding: 16px 20px;
+        margin: 0 10px;
+    }
+    
+    .SideBar-container.open::after {
+        opacity: 1;
+    }
+}
+
+/* Edge detection area for swipe to open */
+.main-content::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 100%;
+    z-index: 999;
+    pointer-events: none;
+}
