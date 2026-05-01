@@ -1,0 +1,109 @@
+.rep-content {
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.rep-summary {
+    background: #1A1341;
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.rep-summary-val {
+    font-size: 48px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.rep-summary-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+}
+
+.rep-loading,
+.rep-empty {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.rep-error {
+    background: #fff3f3;
+    border: 1px solid #ffcccc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #c0392b;
+}
+
+.rep-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(26, 19, 65, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.rep-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.rep-room {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1A1341;
+}
+
+.rep-time {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1A1341;
+}
+
+.rep-class {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+}
+
+.rep-student {
+    font-size: 13px;
+    color: #7a7a9a;
+    margin: 0;
+}
+
+.rep-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.rep-date {
+    font-size: 12px;
+    color: #aaa;
+}
+
+.rep-dist {
+    font-size: 12px;
+    color: #888;
+}
+
+@media (max-width: 480px) {
+    .rep-content { padding: 16px 12px; }
+}

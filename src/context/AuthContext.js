@@ -1,181 +1,128 @@
-// import React, { createContext, useState, useEffect, useContext } from 'react';
-// import authService from '../services/authService';
-// import gameService from '../services/gameService';
-// import { Snackbar, Alert } from '@mui/material';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { authApi } from '../api/api';
 
-// const AuthContext = createContext();
+/**
+ * AuthContext provides authentication state to the entire app.
+ *
+ * What it stores:
+ *  - user        → the authenticated user object (or null)
+ *  - token       → the Bearer token (or null)
+ *  - isLoading   → true while we're checking localStorage on startup
+ *  - isLoggedIn  → derived boolean for clean conditional rendering
+ *
+ * On app startup, we read from localStorage to restore the session.
+ * This means the user stays logged in across page refreshes.
+ */
+const AuthContext = createContext(null);
 
-// export const useAuth = () => {
-//     const context = useContext(AuthContext);
-//     if (!context) {
-//         throw new Error('useAuth must be used within an AuthProvider');
-//     }
-//     return context;
-// };
+export const AuthProvider = ({ children }) => {
+    const [user,      setUser]      = useState(null);
+    const [token,     setToken]     = useState(null);
+    const [isLoading, setIsLoading] = useState(true); // true until hydration done
 
-// export const AuthProvider = ({ children }) => {
-//     const [user, setUser] = useState(null);
-//     const [games, setGames] = useState([]);
-//     const [subscription, setSubscription] = useState(null);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState(null);
-//     const [logoutSuccess, setLogoutSuccess] = useState(false);
+    // ── HYDRATE FROM LOCALSTORAGE ON APP START ────────────────────────────
+    // On every app load, check if we have a stored token.
+    // If yes, verify it's still valid by calling /auth/me.
+    // If the server rejects it (401), the response interceptor in api.js
+    // clears storage — so we don't need to handle that here.
+    useEffect(() => {
+        const hydrate = async () => {
+            const storedToken = localStorage.getItem('auth_token');
+            const storedUser  = localStorage.getItem('auth_user');
 
-//     useEffect(() => {
-//         initializeAuth();
-//     }, []);
+            if (storedToken && storedUser) {
+                try {
+                    // Set token first so the interceptor can attach it
+                    setToken(storedToken);
+                    setUser(JSON.parse(storedUser));
 
-//     const initializeAuth = async () => {
-//         setLoading(true);
-//         try {
-//             if (authService.isAuthenticated()) {
-//                 const userData = authService.getUser();
-//                 setUser(userData);
-//                 await refreshGames();
-//             } else {
-//                 await refreshGames();
-//             }
-//         } catch (err) {
-//             console.error('Auth initialization error:', err);
-//             setError(err.message);
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+                    // Verify token is still valid with the server
+                    const response = await authApi.me();
+                    // Update user data in case it changed since last login
+                    setUser(response.data.data.user);
+                    localStorage.setItem(
+                        'auth_user',
+                        JSON.stringify(response.data.data.user)
+                    );
+                } catch {
+                    // Token rejected by server — clear everything
+                    clearAuth();
+                }
+            }
 
-//     const refreshGames = async (forceRefresh = false) => {
-//         try {
-//             const gamesData = await gameService.getAllGames(forceRefresh);
-//             setGames(gamesData.games || []);
-//             setSubscription(gamesData.subscription || null);
-//             return gamesData;
-//         } catch (err) {
-//             console.error('Error refreshing games:', err);
-//             setError(err.message);
-//             const cachedGames = gameService.getCachedGames();
-//             if (cachedGames && cachedGames.length > 0) {
-//                 setGames(cachedGames);
-//             }
-//             throw err;
-//         }
-//     };
+            setIsLoading(false);
+        };
 
-//     const login = async (email, password) => {
-//         setLoading(true);
-//         setError(null);
-//         try {
-//             const result = await authService.login(email, password);
-//             setUser(result.user);
-//             await refreshGames(true);
-//             return result;
-//         } catch (err) {
-//             console.error('Login error:', err);
-//             setError(err.message);
-//             throw err;
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+        hydrate();
+    }, []);
 
-//     const register = async (userData) => {
-//         setLoading(true);
-//         setError(null);
-//         try {
-//             const result = await authService.register(userData);
-//             return result;
-//         } catch (err) {
-//             console.error('Registration error:', err);
-//             setError(err.message);
-//             throw err;
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+    // ── LOGIN ─────────────────────────────────────────────────────────────
+    const login = useCallback(async (registrationNumber, password, fcmToken = null) => {
+        const payload = {
+            registration_number: registrationNumber,
+            password,
+            ...(fcmToken && { fcm_token: fcmToken }),
+        };
 
-//     const forgotPassword = async (email) => {
-//         setLoading(true);
-//         setError(null);
-//         try {
-//             const result = await authService.forgotPassword(email);
-//             return result;
-//         } catch (err) {
-//             console.error('Forgot password error:', err);
-//             setError(err.message);
-//             throw err;
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+        const response = await authApi.login(payload);
+        const { token: newToken, user: newUser } = response.data.data;
 
-//     const updateProfile = async (profileData) => {
-//         setLoading(true);
-//         setError(null);
-//         try {
-//             const result = await authService.updateProfile(profileData);
-//             const updatedUser = await authService.getProfile();
-//             setUser(updatedUser);
-//             return result;
-//         } catch (err) {
-//             console.error('Profile update error:', err);
-//             setError(err.message);
-//             throw err;
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
+        // Persist to localStorage for session restore on refresh
+        localStorage.setItem('auth_token', newToken);
+        localStorage.setItem('auth_user', JSON.stringify(newUser));
 
-    
-//     // ──────────────
+        setToken(newToken);
+        setUser(newUser);
 
-//     const logout = () => {
-//         authService.logout();
-//         gameService.clearCache();
-//         setUser(null);
-//         setGames([]);
-//         setSubscription(null);
-//         setError(null);
-//         setLogoutSuccess(true);
-//         setTimeout(() => {
-//             setLogoutSuccess(false);
-//         }, 3000);
-//     };
+        return newUser; // Return user so Login page can redirect by role
+    }, []);
 
-//     const value = {
-//         user,
-//         games,
-//         subscription,
-//         loading,
-//         error,
-//         login,
-//         register,
-//         forgotPassword,
-//         logout,
-//         refreshGames,
-//         updateProfile,
-//         updateProfilePicture,  // ← exposed here
-//         changePassword,
-//         isAuthenticated: authService.isAuthenticated(),
-//         logoutSuccess,
-//         setLogoutSuccess
-//     };
+    // ── LOGOUT ────────────────────────────────────────────────────────────
+    const logout = useCallback(async () => {
+        try {
+            await authApi.logout(); // Tell server to revoke the token
+        } catch {
+            // Even if server call fails, clear local state
+            // This handles the case where the token is already expired
+        } finally {
+            clearAuth();
+        }
+    }, []);
 
-//     return (
-//         <AuthContext.Provider value={value}>
-//             {children}
-//             <Snackbar
-//                 open={logoutSuccess}
-//                 autoHideDuration={3000}
-//                 onClose={() => setLogoutSuccess(false)}
-//                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-//             >
-//                 <Alert
-//                     severity="success"
-//                     onClose={() => setLogoutSuccess(false)}
-//                     sx={{ width: '100%' }}
-//                 >
-//                     Logout successful!
-//                 </Alert>
-//             </Snackbar>
-//         </AuthContext.Provider>
-//     );
-// };
+    // ── CLEAR LOCAL AUTH STATE ────────────────────────────────────────────
+    const clearAuth = () => {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        setToken(null);
+        setUser(null);
+    };
+
+    const value = {
+        user,
+        token,
+        isLoading,
+        isLoggedIn: !!token && !!user,
+        login,
+        logout,
+        isAdmin:   user?.role === 'admin',
+        isStudent: user?.role === 'student',
+    };
+
+    return (
+        <AuthContext.Provider value={value}>
+            {children}
+        </AuthContext.Provider>
+    );
+};
+
+// ── HOOK ──────────────────────────────────────────────────────────────────
+// Every component uses: const { user, login, logout, isLoggedIn } = useAuth();
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+
+export default AuthContext;

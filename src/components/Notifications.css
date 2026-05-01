@@ -1,0 +1,90 @@
+.notif-content {
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notif-loading,
+.notif-empty {
+    text-align: center;
+    color: #aaa;
+    font-size: 14px;
+    padding: 40px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.notif-empty span { font-size: 36px; }
+
+.notif-error {
+    background: #fff3f3;
+    border: 1px solid #ffcccc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #c0392b;
+}
+
+.notif-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    box-shadow: 0 2px 8px rgba(26, 19, 65, 0.06);
+    transition: opacity 0.2s;
+}
+
+.notif-card.read {
+    opacity: 0.65;
+}
+
+.notif-dot-col {
+    width: 10px;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 5px;
+    flex-shrink: 0;
+}
+
+.notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #1A1341;
+    flex-shrink: 0;
+}
+
+.notif-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.notif-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1A1341;
+    margin: 0;
+}
+
+.notif-text {
+    font-size: 13px;
+    color: #555;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.notif-time {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+@media (max-width: 480px) {
+    .notif-content { padding: 16px 12px; }
+}

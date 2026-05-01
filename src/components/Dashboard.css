@@ -78,3 +78,210 @@
         font-size: 18px;
     }
 }
+
+
+.dashboard-content {
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ── Greeting ── */
+.dash-greeting {
+    padding: 4px 0 0;
+}
+
+.dash-greeting-sub {
+    font-size: 14px;
+    color: #7a7a9a;
+    margin: 0 0 2px;
+}
+
+.dash-greeting-name {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1A1341;
+    margin: 0 0 4px;
+}
+
+.dash-greeting-reg {
+    font-size: 13px;
+    color: #aaa;
+    margin: 0;
+}
+
+/* ── Stats row ── */
+.dash-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.dash-stat-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 12px rgba(26, 19, 65, 0.07);
+}
+
+.dash-stat-card.accent {
+    background: #1A1341;
+}
+
+.dash-stat-card.accent .dash-stat-value,
+.dash-stat-card.accent .dash-stat-label {
+    color: #ffffff;
+}
+
+.dash-stat-value {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1A1341;
+    line-height: 1;
+}
+
+.dash-stat-label {
+    font-size: 12px;
+    color: #7a7a9a;
+    font-weight: 500;
+    text-align: center;
+}
+
+/* ── Section ── */
+.dash-section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1A1341;
+    margin: 0 0 12px;
+}
+
+.dash-loading {
+    font-size: 14px;
+    color: #aaa;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.dash-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 0;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.dash-empty-icon {
+    font-size: 32px;
+}
+
+/* ── Active session cards ── */
+.dash-session-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(26, 19, 65, 0.06);
+    margin-bottom: 10px;
+}
+
+.dash-session-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+}
+
+.dash-session-room {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1A1341;
+}
+
+.dash-session-class {
+    font-size: 13px;
+    color: #555;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dash-session-time {
+    font-size: 12px;
+    color: #e74c3c;
+    font-weight: 500;
+}
+
+.dash-session-btn {
+    flex-shrink: 0;
+    background: #1A1341;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.2s;
+}
+
+.dash-session-btn:active {
+    opacity: 0.75;
+}
+
+/* ── Quick actions ── */
+.dash-actions-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.dash-action-btn {
+    background: #ffffff;
+    border: none;
+    border-radius: 14px;
+    padding: 20px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1341;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(26, 19, 65, 0.06);
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s;
+}
+
+.dash-action-btn:active {
+    transform: scale(0.96);
+}
+
+.dash-action-icon {
+    font-size: 28px;
+}
+
+/* ── Responsive ── matches your existing @media (max-width: 480px) ── */
+@media (max-width: 480px) {
+    .dashboard-content {
+        padding: 16px 12px;
+        gap: 20px;
+    }
+    .dash-greeting-name {
+        font-size: 22px;
+    }
+    .dash-stat-value {
+        font-size: 28px;
+    }
+}

@@ -1,0 +1,240 @@
+/* ── LOGIN PAGE ──────────────────────────────────────────────────────────
+   Matches the existing #1A1341 dark theme, header font sizes,
+   padding rhythm, and safe-area-inset approach from Dashboard.css
+   ─────────────────────────────────────────────────────────────────────── */
+
+.login-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    background: #1A1341;
+    overflow-x: hidden;
+    padding-top: env(safe-area-inset-top);
+}
+
+/* Fills the status bar area with the header color on iOS */
+.login-status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: env(safe-area-inset-top);
+    background: #1A1341;
+    z-index: 200;
+}
+
+/* ── HEADER — same rhythm as .header in Dashboard.css ── */
+.login-header {
+    background: #1A1341;
+    padding: 24px 20px 32px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.login-header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0 0 4px;
+    letter-spacing: 0.3px;
+}
+
+.login-header-sub {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* ── BODY — white card area ── */
+.login-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f0f2f8;
+    border-radius: 28px 28px 0 0;
+    padding: 32px 20px 40px;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+
+/* ── CARD ── */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 24px rgba(26, 19, 65, 0.10);
+}
+
+.login-card-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.login-avatar {
+    width: 64px;
+    height: 64px;
+    background: rgba(26, 19, 65, 0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin-bottom: 16px;
+}
+
+.login-card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1A1341;
+    margin: 0 0 6px;
+}
+
+.login-card-sub {
+    font-size: 14px;
+    color: #7a7a9a;
+    margin: 0;
+    text-align: center;
+}
+
+/* ── FORM ── */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.login-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1341;
+    letter-spacing: 0.2px;
+}
+
+.login-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #e0e0ee;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #1A1341;
+    background: #f8f8fc;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+}
+
+.login-input:focus {
+    border-color: #1A1341;
+    box-shadow: 0 0 0 3px rgba(26, 19, 65, 0.10);
+    background: #fff;
+}
+
+.login-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ── ERROR ── */
+.login-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    background: #fff3f3;
+    border: 1px solid #ffcccc;
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 13.5px;
+    color: #c0392b;
+    line-height: 1.4;
+}
+
+.login-error-icon {
+    flex-shrink: 0;
+    font-size: 15px;
+    margin-top: 1px;
+}
+
+/* ── SUBMIT BUTTON ── */
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: #1A1341;
+    color: #ffffff;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 4px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.login-btn:active {
+    transform: scale(0.98);
+}
+
+.login-btn:disabled,
+.login-btn.loading {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Spinner inside button */
+.login-spinner {
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── FOOTER ── */
+.login-footer {
+    margin-top: 28px;
+    font-size: 12px;
+    color: #aaa;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* ── RESPONSIVE ── matches @media (max-width: 480px) in Dashboard.css ── */
+@media (max-width: 480px) {
+    .login-header {
+        padding: 20px 15px 28px;
+    }
+    .login-header-title {
+        font-size: 24px;
+    }
+    .login-body {
+        padding: 24px 16px 32px;
+        padding-bottom: calc(32px + env(safe-area-inset-bottom));
+    }
+    .login-card {
+        padding: 24px 20px;
+    }
+}

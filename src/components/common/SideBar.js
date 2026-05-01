@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import './SideBar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { IoHomeOutline, IoGameControllerOutline, IoList, IoMailOutline, IoPower } from "react-icons/io5";
-import { FaRegUser } from "react-icons/fa6";
+import {
+    IoHomeOutline,
+    IoGameControllerOutline,
+    IoList,
+    IoMailOutline,
+    IoPower,
+} from 'react-icons/io5';
+import { FaRegUser } from 'react-icons/fa6';
+import { useAuth } from '../../context/AuthContext';
 
 const SideBar = ({ onItemClick, isOpen = true, onClose, enableGestures = true }) => {
     const [activeItem, setActiveItem] = useState('dashboard');
-    const location = useLocation();
-    const navigate = useNavigate();
+    const location  = useLocation();
+    const navigate  = useNavigate();
+
+    // ── Wire up the logout TODO from the original ──────────────────────
+    const { logout, user } = useAuth();
 
     const items = [
-        { id: 'dashboard', label: 'Dashboard', icon: <IoHomeOutline /> },
-        { id: 'attendance', label: 'Attendance', icon: <IoGameControllerOutline /> },
-        { id: 'reports', label: 'Reports', icon: <FaRegUser /> },
+        { id: 'dashboard',     label: 'Dashboard',     icon: <IoHomeOutline /> },
+        { id: 'attendance',    label: 'Attendance',    icon: <IoGameControllerOutline /> },
+        { id: 'reports',       label: 'Reports',       icon: <FaRegUser /> },
         { id: 'notifications', label: 'Notifications', icon: <IoMailOutline /> },
     ];
 
@@ -33,10 +43,6 @@ const SideBar = ({ onItemClick, isOpen = true, onClose, enableGestures = true })
             case 'notifications':
                 navigate('/notifications');
                 break;
-            case 'logout':
-                // TODO: call logout() here once AuthContext is set up
-                navigate('/login');
-                break;
             default:
                 navigate('/');
         }
@@ -44,6 +50,12 @@ const SideBar = ({ onItemClick, isOpen = true, onClose, enableGestures = true })
         if (window.innerWidth <= 768) {
             onClose?.();
         }
+    };
+
+    const handleLogout = async () => {
+        // Call the real logout from AuthContext — clears token + redirects
+        await logout();
+        navigate('/login', { replace: true });
     };
 
     const handleCloseClick = (e) => {
@@ -61,6 +73,20 @@ const SideBar = ({ onItemClick, isOpen = true, onClose, enableGestures = true })
                 ✕
             </button>
 
+            {/* ── User info block ── */}
+            {user && (
+                <div className="sidebar-user">
+                    <div className="sidebar-user-avatar">
+                        {user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="sidebar-user-info">
+                        <span className="sidebar-user-name">{user.name}</span>
+                        <span className="sidebar-user-reg">{user.registration_number}</span>
+                        <span className={`sidebar-user-role ${user.role}`}>{user.role}</span>
+                    </div>
+                </div>
+            )}
+
             <nav className="sidebar-nav">
                 {items.map((item) => (
                     <button
@@ -69,11 +95,25 @@ const SideBar = ({ onItemClick, isOpen = true, onClose, enableGestures = true })
                         onClick={() => handleItemClick(item)}
                         aria-label={item.label}
                     >
-                        {item.icon && <span className="sidebar-icon">{item.icon}</span>}
+                        {item.icon && (
+                            <span className="sidebar-icon">{item.icon}</span>
+                        )}
                         <span className="sidebar-label">{item.label}</span>
                     </button>
                 ))}
             </nav>
+
+            {/* ── Logout at the bottom, separated from nav ── */}
+            <div className="sidebar-footer">
+                <button
+                    className="sidebar-item sidebar-logout"
+                    onClick={handleLogout}
+                    aria-label="Logout"
+                >
+                    <span className="sidebar-icon"><IoPower /></span>
+                    <span className="sidebar-label">Logout</span>
+                </button>
+            </div>
         </div>
     );
 };
