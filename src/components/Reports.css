@@ -1,109 +1,125 @@
-.rep-content {
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* ── REPORTS V2 ───────────────────────────────────────────────────────── */
+.rv2-content {
+    padding: 16px 16px calc(80px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 16px;
+    background: #f0f2f8;
 }
 
-.rep-summary {
-    background: #1A1341;
-    border-radius: 16px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 4px;
-}
+.rv2-error { background: #fff3f3; border: 1px solid #ffcccc; border-radius: 12px; padding: 12px 16px; font-size: 13px; color: #c0392b; }
+.rv2-loading-list { display: flex; flex-direction: column; gap: 14px; }
+.rv2-empty { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 40px 0; color: #aaa; font-size: 14px; }
+.rv2-empty span { font-size: 36px; }
 
-.rep-summary-val {
-    font-size: 48px;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1;
-    margin-bottom: 6px;
+/* ── Hero ── */
+.rv2-hero {
+    background: #1A1341; border-radius: 20px; padding: 24px 20px;
+    display: flex; align-items: center; gap: 16px;
 }
+.rv2-hero-main { flex: 1; display: flex; flex-direction: column; }
+.rv2-big-num   { font-size: 56px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -2px; }
+.rv2-big-label { font-size: 13px; color: rgba(255,255,255,0.50); margin-top: 4px; }
 
-.rep-summary-label {
-    font-size: 14px;
-    color: rgba(255,255,255,0.6);
-}
+/* Ring chart */
+.rv2-rate-ring  { position: relative; width: 64px; height: 64px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.rv2-ring-svg   { position: absolute; inset: 0; transform: rotate(-90deg); }
+.rv2-ring-bg    { fill: none; stroke: rgba(255,255,255,0.12); stroke-width: 4; }
+.rv2-ring-fg    { fill: none; stroke: #7c6af5; stroke-width: 4; stroke-linecap: round; transition: stroke-dasharray 1s ease; }
+.rv2-ring-label { font-size: 13px; font-weight: 800; color: #fff; line-height: 1; position: relative; z-index: 1; }
+.rv2-ring-sub   { font-size: 9px; color: rgba(255,255,255,0.5); position: relative; z-index: 1; }
 
-.rep-loading,
-.rep-empty {
-    text-align: center;
-    color: #aaa;
-    font-size: 14px;
-    padding: 24px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
+.rv2-hero-side  { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 12px; flex-shrink: 0; }
+.rv2-side-val   { font-size: 18px; font-weight: 800; color: #fff; }
+.rv2-side-lbl   { font-size: 10px; color: rgba(255,255,255,0.50); margin-top: 2px; text-align: center; }
 
-.rep-error {
-    background: #fff3f3;
-    border: 1px solid #ffcccc;
-    border-radius: 10px;
-    padding: 12px 14px;
-    font-size: 13px;
-    color: #c0392b;
+/* ── Tabs ── */
+.rv2-tabs {
+    display: flex; background: #fff; border-radius: 12px; padding: 4px; gap: 2px;
+    box-shadow: 0 1px 6px rgba(26,19,65,0.06);
 }
+.rv2-tab { flex: 1; padding: 9px 6px; border: none; border-radius: 9px; font-size: 12px; font-weight: 600; cursor: pointer; background: none; color: #9a9ab0; transition: background 0.2s, color 0.2s; -webkit-tap-highlight-color: transparent; }
+.rv2-tab.active { background: #1A1341; color: #fff; }
 
-.rep-card {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 16px;
-    box-shadow: 0 2px 10px rgba(26, 19, 65, 0.06);
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+/* ── Cards ── */
+.rv2-card {
+    background: #fff; border-radius: 16px; padding: 18px;
+    box-shadow: 0 2px 10px rgba(26,19,65,0.06);
+    display: flex; flex-direction: column; gap: 14px;
 }
+.rv2-card-title { font-size: 14px; font-weight: 700; color: #1A1341; margin: 0; }
+.rv2-chart-empty { font-size: 13px; color: #aaa; text-align: center; width: 100%; }
 
-.rep-card-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* ── Vertical bar chart ── */
+.rv2-bar-chart {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 6px; height: 120px; padding-top: 20px; position: relative;
 }
+.rv2-bar-col { display: flex; flex-direction: column; align-items: center; flex: 1; height: 100%; justify-content: flex-end; gap: 4px; }
+.rv2-bar-val { font-size: 11px; font-weight: 700; color: #1A1341; min-height: 14px; }
+.rv2-bar {
+    width: 100%; background: #1A1341; border-radius: 6px 6px 0 0;
+    min-height: 4px; max-height: calc(100% - 18px);
+    transition: height 0.8s cubic-bezier(0.34,1.2,0.64,1);
+}
+.rv2-bar-lbl { font-size: 9px; color: #9a9ab0; text-align: center; white-space: nowrap; }
 
-.rep-room {
-    font-size: 17px;
-    font-weight: 700;
-    color: #1A1341;
+/* ── Day-of-week dots ── */
+.rv2-day-row { display: flex; justify-content: space-between; gap: 4px; }
+.rv2-day-col { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.rv2-day-dot {
+    width: 32px; height: 32px; border-radius: 50%; background: #1A1341;
+    transition: opacity 0.5s, transform 0.5s;
 }
+.rv2-day-lbl   { font-size: 10px; color: #9a9ab0; font-weight: 600; }
+.rv2-day-count { font-size: 11px; color: #1A1341; font-weight: 700; min-height: 14px; }
 
-.rep-time {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1A1341;
-}
+/* ── Course horizontal bars ── */
+.rv2-course-row { display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px; border-bottom: 1px solid #f0f2f8; }
+.rv2-course-row:last-child { border-bottom: none; padding-bottom: 0; }
+.rv2-course-info { display: flex; align-items: baseline; gap: 8px; }
+.rv2-course-code { font-size: 13px; font-weight: 700; color: #1A1341; }
+.rv2-course-name { font-size: 11px; color: #9a9ab0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rv2-course-right { display: flex; align-items: center; gap: 10px; }
+.rv2-h-bar-track  { flex: 1; height: 8px; background: #f0f2f8; border-radius: 99px; overflow: hidden; }
+.rv2-h-bar-fill   { height: 100%; background: #1A1341; border-radius: 99px; transition: width 0.8s cubic-bezier(0.34,1.2,0.64,1); min-width: 4px; }
+.rv2-course-count { font-size: 13px; font-weight: 700; color: #1A1341; min-width: 20px; text-align: right; }
 
-.rep-class {
-    font-size: 13px;
-    color: #555;
-    margin: 0;
+/* ── History list ── */
+.rv2-history-list { display: flex; flex-direction: column; gap: 10px; }
+.rv2-history-card {
+    background: #fff; border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    box-shadow: 0 1px 6px rgba(26,19,65,0.05);
 }
+.rv2-hc-left { flex-shrink: 0; }
+.rv2-hc-icon {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(46,204,113,0.15); color: #2ecc71;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+}
+.rv2-hc-body    { flex: 1; overflow: hidden; }
+.rv2-hc-course  { font-size: 14px; font-weight: 700; color: #1A1341; margin: 0 0 2px; }
+.rv2-hc-meta    { font-size: 12px; color: #7a7a9a; margin: 0 0 2px; }
+.rv2-hc-student { font-size: 12px; color: #9a9ab0; margin: 0; }
+.rv2-hc-dist    { font-size: 12px; color: #bbb; flex-shrink: 0; }
 
-.rep-student {
-    font-size: 13px;
-    color: #7a7a9a;
-    margin: 0;
+/* ── Course cards grid ── */
+.rv2-courses-grid { display: flex; flex-direction: column; gap: 12px; }
+.rv2-course-card {
+    background: #fff; border-radius: 14px; padding: 16px;
+    box-shadow: 0 2px 8px rgba(26,19,65,0.06);
+    display: flex; flex-direction: column; gap: 8px;
 }
-
-.rep-card-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
-}
-
-.rep-date {
-    font-size: 12px;
-    color: #aaa;
-}
-
-.rep-dist {
-    font-size: 12px;
-    color: #888;
-}
+.rv2-cc-top { display: flex; justify-content: space-between; align-items: center; }
+.rv2-cc-code { font-size: 16px; font-weight: 800; color: #1A1341; }
+.rv2-cc-count { font-size: 24px; font-weight: 900; color: #1A1341; }
+.rv2-cc-name { font-size: 13px; color: #7a7a9a; margin: 0; }
+.rv2-cc-bar-track { height: 6px; background: #f0f2f8; border-radius: 99px; overflow: hidden; }
+.rv2-cc-bar { height: 100%; background: #1A1341; border-radius: 99px; transition: width 1s cubic-bezier(0.34,1.2,0.64,1); }
+.rv2-cc-dist { font-size: 11px; color: #bbb; margin: 0; }
 
 @media (max-width: 480px) {
-    .rep-content { padding: 16px 12px; }
+    .rv2-content { padding: 12px 12px calc(72px + env(safe-area-inset-bottom)); }
+    .rv2-big-num { font-size: 44px; }
+    .rv2-bar-chart { height: 100px; }
 }

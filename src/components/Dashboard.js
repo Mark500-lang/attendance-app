@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { RiMenu2Line } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
+import { FaRegCircleUser } from 'react-icons/fa6';
 import { IoIosNotificationsOutline } from 'react-icons/io';
 import { useStatusBar } from '../hooks/useStatusBar';
 import { useAuth } from '../context/AuthContext';
@@ -8,146 +8,201 @@ import { attendanceApi, sessionApi } from '../api/api';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const navigate = useNavigate();
-    const context  = useOutletContext();
-    const toggleSidebar = context?.toggleSidebar ?? (() => {});
+    const navigate  = useNavigate();
     useStatusBar('dark', '#1A1341');
+    const { user, isLoading: authLoading } = useAuth();
 
-    const { user } = useAuth();
-
-    const [stats, setStats]       = useState({ totalAttended: 0 });
-    const [sessions, setSessions] = useState([]);
-    const [loading, setLoading]   = useState(true);
+    const [activeSessions,   setActiveSessions]   = useState([]);
+    const [upcomingSessions, setUpcomingSessions] = useState([]);
+    const [history,          setHistory]          = useState([]);
+    const [loading,          setLoading]          = useState(true);
 
     useEffect(() => {
+        if (authLoading) return;
         const load = async () => {
             try {
-                const [historyRes, sessionsRes] = await Promise.all([
-                    attendanceApi.myHistory(),
+                const [activeRes, upcomingRes, historyRes] = await Promise.all([
                     sessionApi.list({ status: 'active' }),
+                    sessionApi.list({ status: 'upcoming' }),
+                    attendanceApi.myHistory(),
                 ]);
-
-                setStats({
-                    totalAttended: historyRes.data.data.total || 0,
-                });
-                setSessions(sessionsRes.data.data.sessions || []);
-            } catch (err) {
-                console.error('Dashboard load error:', err);
-            } finally {
-                setLoading(false);
-            }
+                setActiveSessions(activeRes.data.data.sessions   || []);
+                setUpcomingSessions(upcomingRes.data.data.sessions || []);
+                setHistory(historyRes.data.data.attendances      || []);
+            } catch (e) { console.error(e); }
+            finally     { setLoading(false); }
         };
-
         load();
-    }, []);
+    }, [authLoading]);
 
-    const firstName = user?.name?.split(' ')[0] || 'Student';
+    const firstName    = user?.name?.split(' ')[0] || 'Student';
+    const totalClasses = history.length;
+
+    // Group attendance by course for the mini breakdown
+    const courseBreakdown = history.reduce((acc, a) => {
+        const name = a.session?.class?.course_code || '—';
+        acc[name]  = (acc[name] || 0) + 1;
+        return acc;
+    }, {});
+
+    const fmt = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const fmtDate = (iso) => new Date(iso).toLocaleDateString([], { weekday: 'short', day: 'numeric', month: 'short' });
+
+    const now     = new Date();
+    const greeting = now.getHours() < 12 ? 'Good morning' : now.getHours() < 17 ? 'Good afternoon' : 'Good evening';
 
     return (
         <div className="standalone-page">
-            {/* ── Header — identical structure to your original ── */}
             <div className="header">
                 <div className="header-left-container">
-                    <RiMenu2Line
+                    <FaRegCircleUser
                         className="back-button"
-                        onClick={toggleSidebar}
-                        aria-label="Open menu"
-                        color="rgb(255, 255, 255)"
+                        onClick={() => navigate('/profile')}
+                        aria-label="View profile"
+                        color="#fff"
                     />
                     <h1 className="header-title">Dashboard</h1>
                 </div>
                 <IoIosNotificationsOutline
                     className="notification-icon"
                     onClick={() => navigate('/notifications')}
-                    aria-label="View notifications"
+                    aria-label="Notifications"
                 />
             </div>
 
-            {/* ── Content ── */}
-            <div className="content dashboard-content">
-                {/* Greeting */}
-                <div className="dash-greeting">
-                    <p className="dash-greeting-sub">Good day,</p>
-                    <h2 className="dash-greeting-name">{firstName} 👋</h2>
-                    <p className="dash-greeting-reg">{user?.registration_number}</p>
-                </div>
+            <div className="content db2-content">
 
-                {/* Stats row */}
-                <div className="dash-stats-row">
-                    <div className="dash-stat-card">
-                        <span className="dash-stat-value">
-                            {loading ? '—' : stats.totalAttended}
-                        </span>
-                        <span className="dash-stat-label">Sessions Attended</span>
+                {/* ── Greeting hero ── */}
+                <div className="db2-hero">
+                    <div className="db2-hero-text">
+                        <p className="db2-greeting">{greeting},</p>
+                        <h2 className="db2-name">{firstName} 👋</h2>
+                        <p className="db2-reg">{user?.registration_number}</p>
                     </div>
-                    <div className="dash-stat-card accent">
-                        <span className="dash-stat-value">
-                            {loading ? '—' : sessions.length}
-                        </span>
-                        <span className="dash-stat-label">Active Now</span>
+                    {/* Attendance streak pill */}
+                    <div className="db2-streak">
+                        <span className="db2-streak-num">{loading ? '—' : totalClasses}</span>
+                        <span className="db2-streak-lbl">Attended</span>
                     </div>
                 </div>
 
-                {/* Active sessions */}
-                <div className="dash-section">
-                    <h3 className="dash-section-title">Active Sessions</h3>
+                {/* ── Active session alert ── */}
+                {!loading && activeSessions.length > 0 && (
+                    <div className="db2-alert">
+                        <div className="db2-alert-pulse" />
+                        <div className="db2-alert-text">
+                            <p className="db2-alert-title">🔴 Session Live Now</p>
+                            <p className="db2-alert-sub">
+                                {activeSessions[0].class?.name} · {activeSessions[0].room_name}
+                            </p>
+                            <p className="db2-alert-closes">
+                                Closes at {fmt(activeSessions[0].ends_at)}
+                            </p>
+                        </div>
+                        <button
+                            className="db2-alert-btn"
+                            onClick={() => navigate('/attendance', { state: { preselectedSession: activeSessions[0] } })}
+                        >
+                            Mark
+                        </button>
+                    </div>
+                )}
 
-                    {loading && (
-                        <div className="dash-loading">Loading sessions…</div>
-                    )}
+                {/* ── Stats row ── */}
+                <div className="db2-stats">
+                    <div className="db2-stat">
+                        <span className="db2-stat-val">{loading ? '—' : totalClasses}</span>
+                        <span className="db2-stat-lbl">Total Sessions</span>
+                    </div>
+                    <div className="db2-stat-divider" />
+                    <div className="db2-stat">
+                        <span className="db2-stat-val">{loading ? '—' : activeSessions.length}</span>
+                        <span className="db2-stat-lbl">Active Now</span>
+                    </div>
+                    <div className="db2-stat-divider" />
+                    <div className="db2-stat">
+                        <span className="db2-stat-val">{loading ? '—' : Object.keys(courseBreakdown).length}</span>
+                        <span className="db2-stat-lbl">Courses</span>
+                    </div>
+                </div>
 
-                    {!loading && sessions.length === 0 && (
-                        <div className="dash-empty">
-                            <span className="dash-empty-icon">📭</span>
-                            <p>No active sessions right now.</p>
+                {/* ── Upcoming sessions ── */}
+                <div className="db2-section">
+                    <div className="db2-section-header">
+                        <h3 className="db2-section-title">Upcoming Classes</h3>
+                        <button className="db2-see-all" onClick={() => navigate('/attendance')}>See all</button>
+                    </div>
+
+                    {loading && <div className="db2-shimmer-list"><div className="db2-shimmer" /><div className="db2-shimmer" /></div>}
+
+                    {!loading && upcomingSessions.length === 0 && activeSessions.length === 0 && (
+                        <div className="db2-empty">
+                            <span>📅</span><p>No upcoming classes scheduled.</p>
                         </div>
                     )}
 
-                    {!loading && sessions.map((session) => (
-                        <div key={session.id} className="dash-session-card">
-                            <div className="dash-session-left">
-                                <span className="dash-session-room">{session.room_name}</span>
-                                <span className="dash-session-class">
-                                    {session.class?.name} · {session.class?.course_code}
-                                </span>
-                                <span className="dash-session-time">
-                                    Closes {new Date(session.ends_at).toLocaleTimeString([], {
-                                        hour: '2-digit', minute: '2-digit'
-                                    })}
-                                </span>
+                    {!loading && [...activeSessions, ...upcomingSessions].slice(0, 4).map((s) => (
+                        <div key={s.id} className={`db2-session-card ${s.status === 'active' ? 'live' : ''}`}>
+                            <div className="db2-sc-date">
+                                <span className="db2-sc-day">{new Date(s.starts_at).toLocaleDateString([], { day: 'numeric' })}</span>
+                                <span className="db2-sc-mon">{new Date(s.starts_at).toLocaleDateString([], { month: 'short' })}</span>
                             </div>
-                            <button
-                                className="dash-session-btn"
-                                onClick={() => navigate('/attendance', {
-                                    state: { preselectedSession: session }
-                                })}
-                            >
-                                Mark
-                            </button>
+                            <div className="db2-sc-body">
+                                <p className="db2-sc-course">{s.class?.name}</p>
+                                <p className="db2-sc-meta">{s.room_name} · {fmt(s.starts_at)}–{fmt(s.ends_at)}</p>
+                                <p className="db2-sc-code">{s.class?.course_code}</p>
+                            </div>
+                            <div className="db2-sc-right">
+                                {s.status === 'active'
+                                    ? <span className="db2-badge live">LIVE</span>
+                                    : <span className="db2-badge upcoming">{fmt(s.starts_at)}</span>
+                                }
+                            </div>
                         </div>
                     ))}
                 </div>
 
-                {/* Quick actions */}
-                <div className="dash-section">
-                    <h3 className="dash-section-title">Quick Actions</h3>
-                    <div className="dash-actions-row">
-                        <button
-                            className="dash-action-btn"
-                            onClick={() => navigate('/attendance')}
-                        >
-                            <span className="dash-action-icon">📍</span>
-                            <span>Mark Attendance</span>
-                        </button>
-                        <button
-                            className="dash-action-btn"
-                            onClick={() => navigate('/reports')}
-                        >
-                            <span className="dash-action-icon">📋</span>
-                            <span>My Reports</span>
-                        </button>
+                {/* ── Recent attendance ── */}
+                {!loading && history.length > 0 && (
+                    <div className="db2-section">
+                        <div className="db2-section-header">
+                            <h3 className="db2-section-title">Recent Attendance</h3>
+                            <button className="db2-see-all" onClick={() => navigate('/reports')}>View all</button>
+                        </div>
+                        {history.slice(0, 3).map((a) => (
+                            <div key={a.id} className="db2-history-row">
+                                <div className="db2-hr-dot" />
+                                <div className="db2-hr-body">
+                                    <p className="db2-hr-course">{a.session?.class?.name}</p>
+                                    <p className="db2-hr-meta">{a.session?.room_name} · {fmtDate(a.marked_at)}</p>
+                                </div>
+                                <span className="db2-hr-check">✓</span>
+                            </div>
+                        ))}
                     </div>
-                </div>
+                )}
+
+                {/* ── Course breakdown ── */}
+                {!loading && Object.keys(courseBreakdown).length > 0 && (
+                    <div className="db2-section">
+                        <h3 className="db2-section-title">Attendance by Course</h3>
+                        {Object.entries(courseBreakdown).map(([code, count]) => {
+                            const pct = Math.round((count / totalClasses) * 100);
+                            return (
+                                <div key={code} className="db2-course-row">
+                                    <div className="db2-course-info">
+                                        <span className="db2-course-code">{code}</span>
+                                        <span className="db2-course-count">{count} session{count !== 1 ? 's' : ''}</span>
+                                    </div>
+                                    <div className="db2-bar-track">
+                                        <div className="db2-bar-fill" style={{ width: `${pct}%` }} />
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+
             </div>
         </div>
     );

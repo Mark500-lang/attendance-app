@@ -1,301 +1,176 @@
-/* ── ATTENDANCE PAGE ─────────────────────────────────────────────────── */
-
-.att-content {
-    padding: 20px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* ── ATTENDANCE V2 ───────────────────────────────────────────────────── */
+.att2-content {
+    padding: 16px 16px calc(80px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 14px;
+    background: #f0f2f8;
 }
+
+/* ── Context row: prev / next class ── */
+.att2-context-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.att2-ctx-card {
+    border-radius: 14px; padding: 14px 14px 12px;
+    display: flex; flex-direction: column; gap: 3px;
+    box-shadow: 0 2px 8px rgba(26,19,65,0.07);
+}
+.att2-ctx-card.prev { background: #fff; border-left: 3px solid #9a9ab0; }
+.att2-ctx-card.next { background: #1A1341; border-left: 3px solid #7c6af5; }
+.att2-ctx-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.att2-ctx-card.prev .att2-ctx-label { color: #9a9ab0; }
+.att2-ctx-card.next .att2-ctx-label { color: rgba(255,255,255,0.50); }
+.att2-ctx-val  { font-size: 16px; font-weight: 800; }
+.att2-ctx-card.prev .att2-ctx-val { color: #1A1341; }
+.att2-ctx-card.next .att2-ctx-val { color: #fff; }
+.att2-ctx-sub  { font-size: 12px; }
+.att2-ctx-card.prev .att2-ctx-sub { color: #7a7a9a; }
+.att2-ctx-card.next .att2-ctx-sub { color: rgba(255,255,255,0.65); }
+.att2-ctx-time { font-size: 11px; }
+.att2-ctx-card.prev .att2-ctx-time { color: #bbb; }
+.att2-ctx-card.next .att2-ctx-time { color: rgba(255,255,255,0.45); }
+
+/* ── Tabs ── */
+.att2-tabs {
+    display: flex; background: #fff; border-radius: 12px;
+    padding: 4px; gap: 2px;
+    box-shadow: 0 1px 6px rgba(26,19,65,0.06);
+}
+.att2-tab {
+    flex: 1; padding: 9px 6px; border: none; border-radius: 9px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    background: none; color: #9a9ab0;
+    transition: background 0.2s, color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+}
+.att2-tab.active { background: #1A1341; color: #fff; }
 
 /* ── Success banner ── */
-.att-success-banner {
-    background: #eafaf1;
-    border: 1.5px solid #2ecc71;
-    border-radius: 14px;
-    padding: 16px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
+.att2-success {
+    background: #eafaf1; border: 1.5px solid #2ecc71; border-radius: 14px;
+    padding: 16px; display: flex; align-items: flex-start; gap: 12px;
 }
+.att2-success span { font-size: 24px; flex-shrink: 0; }
+.att2-success-title { font-size: 15px; font-weight: 700; color: #1a7a40; margin: 0 0 2px; }
+.att2-success-sub   { font-size: 13px; color: #555; margin: 0 0 2px; }
+.att2-success-dist  { font-size: 12px; color: #888; margin: 0; }
 
-.att-success-icon {
-    font-size: 24px;
-    flex-shrink: 0;
+/* ── No active sessions ── */
+.att2-no-active {
+    background: #fff; border-radius: 16px; padding: 28px 20px;
+    text-align: center; display: flex; flex-direction: column;
+    align-items: center; gap: 8px;
+    box-shadow: 0 2px 8px rgba(26,19,65,0.06);
 }
-
-.att-success-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1a7a40;
-    margin: 0 0 3px;
-}
-
-.att-success-sub {
-    font-size: 13px;
-    color: #555;
-    margin: 0 0 2px;
-}
-
-.att-success-dist {
-    font-size: 12px;
-    color: #888;
-    margin: 0;
-}
-
-/* ── Card wrapper ── */
-.att-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 2px 12px rgba(26, 19, 65, 0.07);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.att-card-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1A1341;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.att-step {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    background: #1A1341;
-    color: #fff;
-    font-size: 13px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.att-loading,
-.att-empty {
-    font-size: 14px;
-    color: #aaa;
-    text-align: center;
-    padding: 12px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-}
-
-/* ── Session option buttons ── */
-.att-session-option {
-    width: 100%;
-    background: #f8f8fc;
-    border: 1.5px solid #e0e0ee;
-    border-radius: 12px;
-    padding: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+.att2-no-active span { font-size: 36px; }
+.att2-no-active p    { font-size: 14px; color: #7a7a9a; margin: 0; }
+.att2-next-hint      { font-size: 13px; color: #1A1341 !important; }
+.att2-tab-switch-btn {
+    margin-top: 4px; background: #f0f2f8; border: none; border-radius: 10px;
+    padding: 10px 20px; font-size: 13px; font-weight: 600; color: #1A1341;
     cursor: pointer;
-    text-align: left;
-    transition: border-color 0.2s, background 0.2s;
+}
+
+/* ── Session option (active, selectable) ── */
+.att2-session-option {
+    background: #fff; border: 1.5px solid #e0e0ee; border-radius: 14px;
+    padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; cursor: pointer; transition: border-color 0.2s, background 0.2s;
     -webkit-tap-highlight-color: transparent;
 }
-
-.att-session-option.selected {
-    border-color: #1A1341;
-    background: rgba(26, 19, 65, 0.05);
+.att2-session-option.selected { border-color: #1A1341; background: rgba(26,19,65,0.03); }
+.att2-session-option.done     { opacity: 0.65; cursor: default; }
+.att2-so-left { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+.att2-so-live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #ff3b30;
+    flex-shrink: 0; animation: pulse-live 1.5s infinite;
+    box-shadow: 0 0 0 3px rgba(255,59,48,0.20);
 }
+.att2-so-room { font-size: 16px; font-weight: 700; color: #1A1341; margin: 0 0 2px; }
+.att2-so-name { font-size: 12px; color: #7a7a9a; margin: 0 0 2px; }
+.att2-so-time { font-size: 11px; color: #bbb; margin: 0; }
+.att2-live-badge   { font-size: 10px; font-weight: 800; background: rgba(255,59,48,0.12); color: #ff3b30; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
+.att2-marked-badge { font-size: 11px; font-weight: 700; background: rgba(46,204,113,0.12); color: #1a7a40; padding: 4px 10px; border-radius: 20px; white-space: nowrap; }
 
-.att-session-option-left {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    overflow: hidden;
+/* ── GPS & Mark cards ── */
+.att2-card {
+    background: #fff; border-radius: 14px; padding: 18px;
+    display: flex; flex-direction: column; gap: 12px;
+    box-shadow: 0 2px 8px rgba(26,19,65,0.06);
 }
-
-.att-session-room {
-    font-size: 16px;
-    font-weight: 700;
-    color: #1A1341;
+.att2-card-title {
+    font-size: 15px; font-weight: 700; color: #1A1341;
+    margin: 0; display: flex; align-items: center; gap: 10px;
 }
-
-.att-session-name {
-    font-size: 13px;
-    color: #555;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.att2-step {
+    width: 24px; height: 24px; border-radius: 50%; background: #1A1341;
+    color: #fff; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-
-.att-session-time {
-    font-size: 12px;
-    color: #888;
+.att2-gps-ok {
+    display: flex; align-items: center; gap: 10px;
+    background: #eafaf1; border-radius: 10px; padding: 12px;
 }
-
-/* ── Status badge ── */
-.att-status-badge {
-    flex-shrink: 0;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    padding: 4px 10px;
-    border-radius: 20px;
+.att2-gps-dot {
+    width: 10px; height: 10px; border-radius: 50%; background: #2ecc71; flex-shrink: 0;
+    animation: pulse-live 2s infinite; box-shadow: 0 0 0 3px rgba(46,204,113,0.25);
 }
-
-.att-status-badge.active {
-    background: rgba(52, 199, 89, 0.15);
-    color: #1a7a40;
-}
-
-.att-status-badge.upcoming {
-    background: rgba(255, 149, 0, 0.15);
-    color: #b36000;
-}
-
-.att-status-badge.ended {
-    background: rgba(0,0,0,0.06);
-    color: #999;
-}
-
-/* ── GPS result ── */
-.att-gps-result {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #eafaf1;
-    border-radius: 10px;
-    padding: 12px 14px;
-}
-
-.att-gps-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #2ecc71;
-    flex-shrink: 0;
-    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.25);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.25); }
-    50%       { box-shadow: 0 0 0 6px rgba(46, 204, 113, 0.10); }
-}
-
-.att-gps-coords {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1A1341;
-    margin: 0 0 2px;
-    font-variant-numeric: tabular-nums;
-}
-
-.att-gps-accuracy {
-    font-size: 12px;
-    color: #888;
-    margin: 0;
-}
-
-.att-gps-error {
-    background: #fff3f3;
-    border: 1px solid #ffcccc;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 13px;
-    color: #c0392b;
-    line-height: 1.4;
-}
-
-/* ── Buttons ── */
-.att-gps-btn {
-    width: 100%;
-    padding: 14px;
-    background: #f0f2f8;
-    color: #1A1341;
-    border: 1.5px solid #d0d0e8;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: opacity 0.2s;
+.att2-gps-coords { font-size: 12px; font-weight: 600; color: #1A1341; margin: 0 0 2px; }
+.att2-gps-acc    { font-size: 11px; color: #888; margin: 0; }
+.att2-error-box  { background: #fff3f3; border: 1px solid #ffcccc; border-radius: 10px; padding: 11px 14px; font-size: 13px; color: #c0392b; line-height: 1.4; }
+.att2-warn       { background: #fff8e6; border: 1px solid #ffe0a0; border-radius: 10px; padding: 11px 14px; font-size: 13px; color: #8a6000; }
+.att2-hint       { font-size: 12px; color: #aaa; margin: 0; }
+.att2-gps-btn {
+    width: 100%; padding: 13px; background: #f0f2f8; color: #1A1341;
+    border: 1.5px solid #d8d8ec; border-radius: 12px; font-size: 14px; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     -webkit-tap-highlight-color: transparent;
 }
-
-.att-gps-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.att2-gps-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.att2-mark-btn {
+    width: 100%; padding: 15px; background: #1A1341; color: #fff;
+    border: none; border-radius: 13px; font-size: 16px; font-weight: 700;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: opacity 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent;
 }
+.att2-mark-btn:active   { transform: scale(0.98); }
+.att2-mark-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-.att-mark-btn {
-    width: 100%;
-    padding: 16px;
-    background: #1A1341;
-    color: #ffffff;
-    border: none;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: opacity 0.2s, transform 0.1s;
-    -webkit-tap-highlight-color: transparent;
-}
+/* ── Schedule list ── */
+.att2-schedule { display: flex; flex-direction: column; gap: 10px; }
+.att2-loading  { font-size: 14px; color: #aaa; text-align: center; padding: 24px 0; }
+.att2-empty    { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 0; color: #aaa; font-size: 14px; }
+.att2-empty span { font-size: 32px; }
 
-.att-mark-btn:active {
-    transform: scale(0.98);
+.att2-sched-card {
+    background: #fff; border-radius: 14px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 2px 6px rgba(26,19,65,0.05);
+    border-left: 3px solid transparent;
 }
+.att2-sched-card.active   { border-left-color: #ff3b30; }
+.att2-sched-card.upcoming { border-left-color: #1A1341; }
+.att2-sched-card.ended    { border-left-color: #ddd; }
+.att2-sched-card.attended { border-left-color: #2ecc71; }
+.att2-sched-card.missed   { border-left-color: #e74c3c; opacity: 0.75; }
 
-.att-mark-btn:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
-    transform: none;
-}
+.att2-sched-date { display: flex; flex-direction: column; align-items: center; min-width: 34px; flex-shrink: 0; }
+.att2-sched-day  { font-size: 20px; font-weight: 800; color: #1A1341; line-height: 1; }
+.att2-sched-mon  { font-size: 11px; color: #9a9ab0; font-weight: 600; text-transform: uppercase; }
 
-/* ── Warnings / errors ── */
-.att-warn {
-    background: #fff8e6;
-    border: 1px solid #ffe0a0;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 13px;
-    color: #8a6000;
-}
+.att2-sched-body { flex: 1; overflow: hidden; }
+.att2-sched-course { font-size: 13px; font-weight: 700; color: #1A1341; margin: 0 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.att2-sched-meta   { font-size: 12px; color: #7a7a9a; margin: 0 0 1px; }
+.att2-sched-code   { font-size: 11px; color: #ccc; margin: 0; }
 
-.att-error {
-    display: flex;
-    align-items: flex-start;
-    gap: 7px;
-    background: #fff3f3;
-    border: 1px solid #ffcccc;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 13.5px;
-    color: #c0392b;
-    line-height: 1.4;
+.att2-sched-right { flex-shrink: 0; }
+.att2-sched-mark-btn {
+    background: #1A1341; color: #fff; border: none; border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 700; cursor: pointer;
 }
-
-.att-hint {
-    font-size: 12px;
-    color: #aaa;
-    text-align: center;
-    margin: 0;
-    line-height: 1.4;
-}
+.att2-sched-badge  { font-size: 11px; background: #f0f2f8; color: #1A1341; padding: 4px 9px; border-radius: 20px; font-weight: 600; }
+.att2-sched-done   { font-size: 12px; font-weight: 700; color: #2ecc71; }
+.att2-sched-absent { font-size: 12px; font-weight: 700; color: #e74c3c; }
 
 @media (max-width: 480px) {
-    .att-content { padding: 16px 12px; }
-    .att-card    { padding: 16px; }
+    .att2-content { padding: 12px 12px calc(72px + env(safe-area-inset-bottom)); }
+    .att2-tab     { font-size: 11px; padding: 8px 4px; }
 }

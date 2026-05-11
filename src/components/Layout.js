@@ -1,128 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import BottomNav from './common/BottomNav';
 import './Layout.css';
-import SideBar from './common/SideBar';
 
+/**
+ * Layout wraps every protected page.
+ *
+ * Before: Layout managed sidebar open/closed state and passed
+ *         toggleSidebar down via Outlet context.
+ *
+ * Now:    BottomNav is always visible at the bottom.
+ *         No sidebar state needed. No context needed for toggling.
+ *         Each page header's left icon navigates to /profile directly.
+ *
+ * The .layout-root takes full height and the page content sits
+ * above the bottom nav via padding-bottom set in BottomNav.css.
+ */
 const Layout = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [touchStartX, setTouchStartX] = useState(null);
-    const [touchEndX, setTouchEndX] = useState(null);
-    const navigate = useNavigate();
-    const location = useLocation();
-
-    const handleSidebarItemClick = (item) => {
-        const routeMap = {
-            'dashboard': '/',
-            'attendance': '/attendance',
-            'reports': '/reports',
-            'notifications': '/notifications',
-            'logout': '/'
-        };
-
-        if (item.id === 'logout') {
-            // Handle logout logic
-            navigate('/');
-        } else if (routeMap[item.id]) {
-            navigate(routeMap[item.id]);
-            // Close sidebar on mobile after selecting item
-            if (window.innerWidth <= 768) {
-                setSidebarOpen(false);
-            }
-        }
-    };
-
-    const toggleSidebar = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
-
-    // Handle swipe gestures for sidebar
-    useEffect(() => {
-        const minSwipeDistance = 50;
-        
-        const handleTouchStart = (e) => {
-            setTouchStartX(e.touches[0].clientX);
-        };
-
-        const handleTouchMove = (e) => {
-            setTouchEndX(e.touches[0].clientX);
-        };
-
-        const handleTouchEnd = () => {
-            if (!touchStartX || !touchEndX) return;
-            
-            const distance = touchStartX - touchEndX;
-            const swipeDistance = Math.abs(distance);
-            
-            if (swipeDistance > minSwipeDistance) {
-                if (distance > 0 && sidebarOpen) {
-                    // Left swipe - close sidebar
-                    setSidebarOpen(false);
-                } else if (distance < 0 && !sidebarOpen) {
-                    // Right swipe - open sidebar
-                    // Only open from edge swipes (first 20px of screen)
-                    if (touchStartX < 20) {
-                        setSidebarOpen(true);
-                    }
-                }
-            }
-            
-            // Reset touch coordinates
-            setTouchStartX(null);
-            setTouchEndX(null);
-        };
-
-        // Only enable swipe gestures on mobile
-        if (window.innerWidth <= 1300) {
-            document.addEventListener('touchstart', handleTouchStart);
-            document.addEventListener('touchmove', handleTouchMove);
-            document.addEventListener('touchend', handleTouchEnd);
-        }
-
-        return () => {
-            document.removeEventListener('touchstart', handleTouchStart);
-            document.removeEventListener('touchmove', handleTouchMove);
-            document.removeEventListener('touchend', handleTouchEnd);
-        };
-    }, [touchStartX, touchEndX, sidebarOpen]);
-
     return (
-        <div className="app-layout">
-            {/* Sidebar Overlay - closes sidebar when clicked */}
-            {sidebarOpen && (
-                <div 
-                    className="sidebar-overlay"
-                    onClick={() => setSidebarOpen(false)}
-                    onTouchStart={(e) => e.stopPropagation()}
-                />
-            )}
-            
-            {/* Sidebar with swipe to close enabled */}
-            <SideBar 
-                onItemClick={handleSidebarItemClick}
-                isOpen={sidebarOpen}
-                onClose={() => setSidebarOpen(false)}
-                enableGestures={true}
-            />
-            
-            {/* Main Content Area */}
-            <main 
-                className="main-content"
-                onTouchStart={(e) => {
-                    // Only track touches near the left edge for opening sidebar
-                    if (e.touches[0].clientX < 20 && !sidebarOpen) {
-                        setTouchStartX(e.touches[0].clientX);
-                    }
-                }}
-                onTouchMove={(e) => {
-                    if (touchStartX !== null && touchStartX < 20) {
-                        setTouchEndX(e.touches[0].clientX);
-                    }
-                }}
-            >
-                
-                {/* Outlet will render the current page */}
-                <Outlet context={{ toggleSidebar }} />
+        <div className="layout-root">
+            {/* Page content renders here */}
+            <main className="layout-main">
+                <Outlet />
             </main>
+
+            {/* Fixed bottom navigation */}
+            <BottomNav />
         </div>
     );
 };
